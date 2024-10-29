@@ -1,0 +1,58 @@
+import DisplayNote from "./components/DisplayNote"
+import {useState} from 'react'
+
+const App = (props) => {
+  const [notes, setNotes] = useState(props.notes)
+  const [newNote, setNewNote] = useState('new note')
+  const [showAll, setShowAll] = useState(true)
+
+  const addNote=(event)=>{
+    event.preventDefault()
+    console.log('button clicked', event.target)
+
+    //create note
+    const noteObj ={
+      content: newNote,
+      important: Math.random() < 0.5,
+      id:String(notes.length+1),
+    }
+    //we will concat new object to notes and then set that new array as our new notes array
+    setNotes(notes.concat(noteObj))
+    setNewNote('')
+
+  }
+
+  const toggleFilter = () => {
+    setShowAll(!showAll)
+  }
+
+  // change the newNote as user is typing, as it update evreytime input changes
+  const handleNoteChange = (event) => {
+    console.log(event.target.value)
+    setNewNote(event.target.value)
+  }
+  //if showall is true then notesToShow = notes, else filtered
+  //notesToShow is array
+  const notesToShow = showAll?notes : notes.filter(note=>note.important === true)
+  //filter returns new array containin only notes with important boolean
+
+
+  return (
+    <div>
+      <h1>Notes</h1>
+      <div><button onClick={toggleFilter}> {showAll?"Show important": "Show All"}</button></div>
+      <ul>
+        {notesToShow.map(note => 
+        <li>
+          <DisplayNote note={note} key={note.id}/>
+        </li>
+      )}
+      </ul>
+      <form onSubmit={addNote}>
+        <input value={newNote} onChange={handleNoteChange}/><button type="submit">save</button>
+      </form>
+    </div>
+  )
+}
+
+export default App
